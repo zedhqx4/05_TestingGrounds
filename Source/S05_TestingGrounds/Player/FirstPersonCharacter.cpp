@@ -34,7 +34,6 @@ AFirstPersonCharacter::AFirstPersonCharacter()
 	Mesh1P->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
 	Mesh1P->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
 
-
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(100.0f, 30.0f, 10.0f);
 
@@ -53,6 +52,12 @@ void AFirstPersonCharacter::BeginPlay()
 	}
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
 	Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh component to Skeleton, doing it here because the skelton is not yet created in the constructor
+	Gun->AnimInstance = Mesh1P->GetAnimInstance();
+	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AFirstPersonCharacter::TouchStarted);
+	if (EnableTouchscreenMovement(InputComponent) == false)
+	{
+		InputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,11 +71,7 @@ void AFirstPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Inp
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AFirstPersonCharacter::TouchStarted);
-	if (EnableTouchscreenMovement(InputComponent) == false)
-	{
-		//InputComponent->BindAction("Fire", IE_Pressed, this, &AFirstPersonCharacter::OnFire);
-	}
+	
 
 	InputComponent->BindAxis("MoveForward", this, &AFirstPersonCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &AFirstPersonCharacter::MoveRight);
