@@ -43,6 +43,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimInstance* AnimInstance;
 	
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	/** Fires a projectile. */
 	void OnFire();
 	
